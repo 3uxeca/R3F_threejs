@@ -29,9 +29,11 @@ export const GLBModel = () => {
   // });
 
   useEffect(() => {
-    actions[currentAnimation].fadeIn(0.5).play();
+    // actions[currentAnimation].fadeIn(0.5).play();
+    actions[currentAnimation].play();
     return () => {
-      actions[currentAnimation].fadeOut(0.5).stop();
+      // actions[currentAnimation].fadeOut(0.5).stop();
+      actions[currentAnimation].stop();
     };
   }, [actions, currentAnimation]);
 
