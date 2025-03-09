@@ -1,6 +1,10 @@
 import "./style.css";
 import * as THREE from "three";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
+import { FlyControls } from "three/examples/jsm/controls/FlyControls.js";
+import { FirstPersonControls } from "three/examples/jsm/controls/FirstPersonControls.js";
+import { PointerLockControls } from "three/examples/jsm/controls/PointerLockControls.js";
+import { TrackballControls } from "three/examples/jsm/controls/TrackballControls.js";
 
 const renderer = new THREE.WebGLRenderer({ antialias: true });
 renderer.shadowMap.enabled = true; // renderer에서 shadowMap을 사용
@@ -364,9 +368,62 @@ const directionalLightHelper = new THREE.DirectionalLightHelper(
 );
 scene.add(directionalLightHelper);
 
-// controls
+// Controls 실습
 const orbitControls = new OrbitControls(camera, renderer.domElement);
-orbitControls.update();
+// orbitControls.enableDamping = true;
+// orbitControls.dampingFactor = 0.03;
+// orbitControls.enableZoom = true;
+// orbitControls.enablePan = true;
+// orbitControls.enableRotate = true;
+// orbitControls.autoRotate = false;
+// orbitControls.autoRotateSpeed = 2;
+
+// orbitControls.maxPolarAngle = Math.PI / 2;
+// orbitControls.minPolarAngle = Math.PI / 4;
+// orbitControls.maxAzimuthAngle = Math.PI / 2;
+// orbitControls.minAzimuthAngle = -Math.PI / 2;
+
+// update 무조건 필요
+// const flyControls = new FlyControls(camera, renderer.domElement);
+// flyControls.movementSpeed = 1; // key wasd로 이동하는 속도
+// flyControls.rollSpeed = Math.PI / 10;
+// flyControls.autoForward = false;
+
+camera.position.set(0, 1, 5);
+// const firstPersonControls = new FirstPersonControls(
+//   camera,
+//   renderer.domElement
+// );
+// firstPersonControls.lookSpeed = 0.1; // 시선이 변경되는 속력
+// firstPersonControls.movementSpeed = 1; // 카메라의 이동 속력
+// firstPersonControls.lookVertical = false; // 카메라 수직이동 활성화여부
+
+// 3인칭 fps같은 시점
+// const pointerLockControls = new PointerLockControls(
+//   camera,
+//   renderer.domElement
+// );
+// window.addEventListener("click", () => {
+//   pointerLockControls.lock();
+// });
+
+// const trackballControls = new TrackballControls(camera, renderer.domElement);
+// trackballControls.rotateSpeed = 2;
+// trackballControls.zoomSpeed = 1.5;
+// trackballControls.panSpeed = 0.5;
+// trackballControls.noRotate = false;
+// trackballControls.noZoom = false;
+// trackballControls.noPan = false;
+// trackballControls.staticMoving = false;
+// trackballControls.dynamicDampingFactor = 0.05;
+
+// const target = new THREE.Mesh(
+//   new THREE.SphereGeometry(0.5),
+//   new THREE.MeshStandardMaterial({ color: 0x0000ff })
+// );
+// target.position.set(4, 0.5, 0);
+// scene.add(target);
+// trackballControls.target = target.position;
 
 // 화면 사이즈가 변경될 때
 window.addEventListener("resize", () => {
@@ -383,6 +440,7 @@ window.addEventListener("resize", () => {
   renderer.render(scene, camera);
 });
 
+const clock = new THREE.Clock();
 const render = () => {
   renderer.render(scene, camera);
 
@@ -395,6 +453,10 @@ const render = () => {
   // textureMesh.rotation.y += 0.01;
 
   requestAnimationFrame(render);
+  orbitControls.update();
+  // flyControls.update(clock.getDelta());
+  // firstPersonControls.update(clock.getDelta());
+  // trackballControls.update();
 };
 
 render();
