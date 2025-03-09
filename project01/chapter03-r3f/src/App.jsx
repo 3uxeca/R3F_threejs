@@ -1,8 +1,10 @@
+import { MainCanvas } from "./components/MainCanvas";
+
 function App() {
   return (
-    <>
-      <h1>지금부터 r3f를 재밌게 배워봅시다.</h1>
-    </>
+    <div style={{ width: "100vw", height: "100vh" }}>
+      <MainCanvas />
+    </div>
   );
 }
 
