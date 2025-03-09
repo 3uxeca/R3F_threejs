@@ -439,6 +439,7 @@ const gltfLoader = new GLTFLoader();
 const gltf = await gltfLoader.loadAsync("/dancer.glb");
 console.log(gltf);
 const character = gltf.scene;
+const animationClips = gltf.animations;
 character.position.y = 0.8;
 character.scale.set(0.01, 0.01, 0.01);
 character.castShadow = true;
@@ -451,6 +452,20 @@ character.traverse((obj) => {
   }
 });
 scene.add(character);
+
+// 모델링 파일에 포함되어있는 애니메이션 재생 실습
+const mixer = new THREE.AnimationMixer(character);
+const action = mixer.clipAction(animationClips[3]);
+action.setLoop(THREE.LoopRepeat);
+// action.setDuration(10); // 재생 시간
+// action.setEffectiveTimeScale(2);  // 재생 속력 xN배
+// action.setEffectiveWeight(2); // action이 분명한 정도
+action.play();
+
+// 애니메이션 정지
+// setTimeout(() => {
+//   mixer.clipAction(animationClips[3]).paused = true;
+// }, 3000);
 
 // 화면 사이즈가 변경될 때
 window.addEventListener("resize", () => {
@@ -484,6 +499,11 @@ const render = () => {
   // flyControls.update(clock.getDelta());
   // firstPersonControls.update(clock.getDelta());
   // trackballControls.update();
+
+  // 애니메이션 실습
+  if (mixer) {
+    mixer.update(clock.getDelta());
+  }
 };
 
 render();
