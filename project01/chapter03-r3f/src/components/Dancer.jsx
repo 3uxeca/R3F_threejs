@@ -10,42 +10,44 @@ import { SkeletonUtils } from "three-stdlib";
 
 export function Dancer(props) {
   const group = React.useRef();
-  const { scene, animations } = useGLTF("/dancer.glb");
-  const clone = React.useMemo(() => SkeletonUtils.clone(scene), [scene]);
-  const { nodes, materials } = useGraph(clone);
+  const { nodes, materials, animations } = useGLTF("/dancer.glb");
   const { actions } = useAnimations(animations, group);
   const [currentAnimation, setCurrentAnimation] = useState("wave");
 
   useEffect(() => {
-    scene.traverse((obj) => {
-      if (obj.isMesh) {
-        obj.castShadow = true;
-        obj.receiveShadow = true;
-      }
-    });
-  }, [scene, actions]);
+    if (group.current) {
+      group.current.traverse((mesh) => {
+        if (mesh.isMesh) {
+          mesh.castShadow = true;
+          mesh.receiveShadow = true;
+        }
+      });
+    }
+  }, []);
 
   useEffect(() => {
-    // actions[currentAnimation].fadeIn(0.5).play();
-    actions[currentAnimation].play();
-    return () => {
-      // actions[currentAnimation].fadeOut(0.5).stop();
-      actions[currentAnimation].stop();
-    };
+    if (actions) {
+      actions[currentAnimation].fadeIn(0.5).play();
+      // actions[currentAnimation].play();
+      return () => {
+        actions[currentAnimation].fadeOut(0.5).stop();
+        // actions[currentAnimation].stop();
+      };
+    }
   }, [actions, currentAnimation]);
 
   return (
     <group
+      scale={0.01}
+      position-y={0.8}
+      ref={group}
+      {...props}
       onClick={() => {
         setCurrentAnimation((prev) => {
           if (prev === "wave") return "windmill";
           return "wave";
         });
       }}
-      scale={0.01}
-      position-y={0.8}
-      ref={group}
-      {...props}
       dispose={null}
     >
       <group name="AuxScene">

@@ -43,18 +43,20 @@ export const Meshes = () => {
         material-color={"hotpink"}
       /> */}
 
-      {/* <TorusKnot
+      <TorusKnot
         args={[1, 0.2, 128, 128, 2, 3]}
-        position={[-0, 1.6, 0]}
+        position={[3, 1.6, 0]}
         castShadow
         receiveShadow
       >
         <meshStandardMaterial
-          color={0xff0000}
-          // roughness={0.5}
-          // metalness={1}
+          color={0xffff00}
+          roughness={0.2}
+          metalness={0.5}
+          emissive={0xffff00}
+          emissiveIntensity={2}
         />
-      </TorusKnot> */}
+      </TorusKnot>
       {/* <TorusKnot
         args={[1, 0.2, 128, 128, 2, 3]}
         position={[-7, 1.6, 0]}
