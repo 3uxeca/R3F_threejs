@@ -1,5 +1,6 @@
 import "./style.css";
 import * as THREE from "three";
+import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader.js";
 import { OrbitControls } from "three/examples/jsm/controls/OrbitControls.js";
 import { FlyControls } from "three/examples/jsm/controls/FlyControls.js";
 import { FirstPersonControls } from "three/examples/jsm/controls/FirstPersonControls.js";
@@ -343,7 +344,7 @@ const boxMesh = new THREE.Mesh(boxGeometry, boxMaterial);
 boxMesh.castShadow = true;
 boxMesh.receiveShadow = true;
 boxMesh.position.y = 0.5;
-scene.add(boxMesh);
+// scene.add(boxMesh);
 
 const directionalLight = new THREE.DirectionalLight(0xffffff, 5);
 scene.add(directionalLight);
@@ -366,12 +367,12 @@ const directionalLightHelper = new THREE.DirectionalLightHelper(
   directionalLight,
   1
 );
-scene.add(directionalLightHelper);
+// scene.add(directionalLightHelper);
 
 // Controls 실습
 const orbitControls = new OrbitControls(camera, renderer.domElement);
-// orbitControls.enableDamping = true;
-// orbitControls.dampingFactor = 0.03;
+orbitControls.enableDamping = true;
+orbitControls.dampingFactor = 0.03;
 // orbitControls.enableZoom = true;
 // orbitControls.enablePan = true;
 // orbitControls.enableRotate = true;
@@ -424,6 +425,32 @@ camera.position.set(0, 1, 5);
 // target.position.set(4, 0.5, 0);
 // scene.add(target);
 // trackballControls.target = target.position;
+
+// GLB(GLTF) 모델링 파일 로드 실습
+const gltfLoader = new GLTFLoader();
+// 동기
+// gltfLoader.load("/dancer.glb", (gltf) => {
+//   const character = gltf.scene;
+//   character.position.y = 0.8;
+//   character.scale.set(0.01, 0.01, 0.01);
+//   scene.add(character);
+// });
+// 비동기
+const gltf = await gltfLoader.loadAsync("/dancer.glb");
+console.log(gltf);
+const character = gltf.scene;
+character.position.y = 0.8;
+character.scale.set(0.01, 0.01, 0.01);
+character.castShadow = true;
+character.receiveShadow = true;
+// character 안에 포함되어있는 모든 요소들(children)에 대해 shadow 속성 설정하는 메소드 traverse
+character.traverse((obj) => {
+  if (obj.isMesh) {
+    obj.castShadow = true;
+    obj.receiveShadow = true;
+  }
+});
+scene.add(character);
 
 // 화면 사이즈가 변경될 때
 window.addEventListener("resize", () => {
