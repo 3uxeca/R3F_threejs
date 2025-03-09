@@ -36,6 +36,7 @@ const floor = new THREE.Mesh(floorGeometry, floorMaterial);
 floor.rotation.x = -Math.PI / 2; // -90도
 floor.receiveShadow = true;
 floor.castShadow = true;
+floor.name = "FLOOR";
 scene.add(floor);
 
 //////////////////////////////////////////////////////////////////
@@ -456,7 +457,7 @@ scene.add(character);
 // 모델링 파일에 포함되어있는 애니메이션 재생 실습
 const mixer = new THREE.AnimationMixer(character);
 const action = mixer.clipAction(animationClips[3]);
-action.setLoop(THREE.LoopRepeat);
+action.setLoop(THREE.LoopPingPong);
 // action.setDuration(10); // 재생 시간
 // action.setEffectiveTimeScale(2);  // 재생 속력 xN배
 // action.setEffectiveWeight(2); // action이 분명한 정도
@@ -466,6 +467,26 @@ action.play();
 // setTimeout(() => {
 //   mixer.clipAction(animationClips[3]).paused = true;
 // }, 3000);
+
+// Pointer 이벤트 실습
+const newPosition = new THREE.Vector3(0, 1, 0);
+const rayCaster = new THREE.Raycaster(); // scene을 관통하는 레이저
+
+// three.js에서의 좌표계는 화면 좌측상단이 (-1, 1) 우측 하단이 (1, -1), 중앙이 (0, 0)
+renderer.domElement.addEventListener("pointerdown", (e) => {
+  // 화면 좌표를 three.js 좌표계로 변환
+  const x = (e.clientX / window.innerWidth) * 2 - 1;
+  const y = -((e.clientY / window.innerHeight) * 2 - 1);
+
+  rayCaster.setFromCamera(new THREE.Vector2(x, y), camera);
+  const intersects = rayCaster.intersectObjects(scene.children); // 레이저가 관통한 오브젝트
+  // console.log("intersects", intersects);
+
+  const intersectFloor = intersects.find((i) => (i.object.name = "FLOOR"));
+  console.log("intersectFloor", intersectFloor);
+  newPosition.copy(intersectFloor.point); // newPosition를 intersectFloor.point로 복사해서 값 변경
+  newPosition.y = 1;
+});
 
 // 화면 사이즈가 변경될 때
 window.addEventListener("resize", () => {
@@ -483,7 +504,23 @@ window.addEventListener("resize", () => {
 });
 
 const clock = new THREE.Clock();
+const targetVector = new THREE.Vector3();
+
 const render = () => {
+  character.lookAt(newPosition);
+  targetVector
+    .subVectors(newPosition, character.position)
+    .normalize() // 정규화
+    .multiplyScalar(0.01); // 벡터의 방향은 건드리지 않고 크기만 바꿈
+  if (
+    Math.abs(character.position.x - newPosition.x) >= 1 ||
+    Math.abs(character.position.z - newPosition.z) >= 1
+  ) {
+    character.position.x += targetVector.x;
+    character.position.z += targetVector.z;
+    action.stop();
+  }
+  action.play();
   renderer.render(scene, camera);
 
   // Material 실습
