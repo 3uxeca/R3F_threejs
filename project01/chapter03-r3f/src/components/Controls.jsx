@@ -9,6 +9,7 @@ import {
 export const Controls = () => {
   return (
     <>
+      <OrbitControls />
       {/* <OrbitControls
         enableDamping
         dampingFactor={0.03}
@@ -32,7 +33,7 @@ export const Controls = () => {
         lookVertical={false}
       /> */}
       {/* <PointerLockControls /> */}
-      <TrackballControls
+      {/* <TrackballControls
         rotateSpeed={2}
         zoomSpeed={1.5}
         panSpeed={0.5}
@@ -41,7 +42,7 @@ export const Controls = () => {
         noPan={false}
         staticMoving={false}
         dynamicDampingFactor={0.05}
-      />
+      /> */}
     </>
   );
 };
