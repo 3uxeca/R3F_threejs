@@ -1,9 +1,8 @@
 import { Canvas } from "@react-three/fiber";
-import { OrbitControls } from "@react-three/drei";
 import { Color } from "three";
 import { Meshes } from "./Meshes";
 import { Lights } from "./Lights";
-import * as THREE from "three";
+import { Controls } from "./Controls";
 export const MainCanvas = () => {
   return (
     <Canvas
@@ -25,7 +24,7 @@ export const MainCanvas = () => {
         background: new Color(0x000000),
       }}
     >
-      <OrbitControls />
+      <Controls />
       <Lights />
       <Meshes />
     </Canvas>
