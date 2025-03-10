@@ -70,8 +70,37 @@ export const Dancer = () => {
         y: -4 * Math.PI,  
       },
       0.5
+    ).from(
+      dancerRef.current.position,
+      {
+        duration: 4,
+        x: 3,
+      },
+      "<" // 위 코드와 동시 동작
+    ).to(
+      three.camera.position,
+      {
+        duration: 10,
+        x: 2,
+        z: 8
+      },
+      "<"   // 위 코드와 동시 동작
+    ).to(
+      three.camera.position,
+      {
+        duration: 10,
+        x: 0,
+        z: 6, // 이 코드들은 위 코드들이 모두 실행된 다음 동작
+      }
+    ).to(
+      three.camera.position,
+      {
+        duration: 10,
+        x: 0,
+        z: 16
+      }
     )
-  }, [isEntered]);
+  }, [isEntered, three.camera.position]);
 
   if(isEntered) {
     return (
