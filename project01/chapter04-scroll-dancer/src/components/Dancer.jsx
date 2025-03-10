@@ -57,7 +57,32 @@ export const Dancer = () => {
     if(!isEntered) return;
     three.camera.lookAt(1, 2, 0);
     actions['wave'].play();
-  }, [actions, isEntered]);
+    three.scene.background = new THREE.Color(colors.boxMaterialColor);
+    scene.traverse(obj => {
+      if(obj.isMesh) {
+        obj.castShadow = true;
+        obj.receiveShadow = true;
+      }
+    })
+  }, [actions, isEntered, scene, three.camera, three.scene]);
+
+  // 애니메이션 제어
+  useEffect(() => {
+    let timeout;
+    if(currentAnimation === 'wave') {
+      actions[currentAnimation]?.reset().fadeIn(0.5).play();
+    } else {
+      actions[currentAnimation]?.reset().fadeIn(0.5).play().setLoop(THREE.LoopOnce, 1);
+      timeout = setTimeout(() => {
+        if(actions[currentAnimation]) {
+          actions[currentAnimation].paused = true;
+        }
+      }, 8000);
+      return () => {
+        clearTimeout(timeout);
+      };
+    }
+  }, [actions, currentAnimation]);
 
   useEffect(() => {
     // gsap
@@ -86,7 +111,33 @@ export const Dancer = () => {
         duration: 2.5,
         z: 0,
       }
+    );
+    gsap.fromTo(
+      colors,
+      {boxMaterialColor: '#0c0400'},
+      {duration: 2.5, boxMaterialColor: '#dc4f00'}
     )
+    gsap.to(starGroupRef01.current, {
+      yoyo: true, // 애니메이션이 실행되었다가 역재생하는 값
+      duration: 2,
+      repeat: -1, // -3이면 무한 반복
+      ease: 'linear', // 선형적 속도로 재생
+      size: 0.05, // 대상의 크기 설정
+    });
+    gsap.to(starGroupRef02.current, {
+      yoyo: true,
+      duration: 3,
+      repeat: -1,
+      ease: 'linear',
+      size: 0.05,
+    });
+    gsap.to(starGroupRef03.current, {
+      yoyo: true,
+      duration: 4,
+      repeat: -1,
+      ease: 'linear',
+      size: 0.05,
+    });        
   }, [isEntered, three.camera.position, three.camera.rotation]);
 
   useEffect(() => {
