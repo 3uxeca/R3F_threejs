@@ -1,6 +1,6 @@
 import { useRecoilValue } from "recoil"
 import { IsEnteredAtom } from "../stores"
-import { useEffect, useMemo, useRef } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { Box, Circle, Points, useAnimations, useGLTF, useScroll, useTexture } from "@react-three/drei";
 import { Loader } from "./Loader";
 import gsap from 'gsap';
@@ -8,13 +8,27 @@ import { useFrame, useThree } from "@react-three/fiber";
 import * as THREE from 'three';
 
 let timeline;
+const colors = {
+  boxMaterialColor: '#dc4f00',
+}
 export const Dancer = () => {
   const three = useThree();
   const isEntered = useRecoilValue(IsEnteredAtom);
   const dancerRef = useRef(null);
+  const boxRef = useRef(null);  // 공간을 담은 커다란 Box mesh
+  const starGroupRef01 = useRef(null);
+  const starGroupRef02 = useRef(null);
+  const starGroupRef03 = useRef(null);
+  const rectAreaLightRef = useRef(null);
+  const hemisphereLightRef = useRef(null);
+  
   const { scene, animations } = useGLTF('/models/dancer.glb');
   const texture = useTexture('/texture/5.png');
   const { actions } = useAnimations(animations, dancerRef);
+
+  const [currentAnimation, setCurrentAnimation] = useState('wave');
+  const [rotateFinished, setRotateFinished] = useState(false);  // 카메라 회전을 마무리했는지 여부
+
   const { positions } = useMemo(() => {
     const count = 500;
     const positions = new Float32Array(count * 3); // x,y,z 하나씩 받아야해서 * 3
@@ -30,12 +44,18 @@ export const Dancer = () => {
     console.log(scroll.offset);
 
     if(!isEntered) return;
-
     timeline.seek(scroll.offset * timeline.duration());
-  })
+    boxRef.current.material.color = new THREE.Color(colors.boxMaterialColor);
+    if(rotateFinished) {
+      setCurrentAnimation('breakdancingEnd');
+    } else {
+      setCurrentAnimation('wave');
+    }
+  });
 
   useEffect(() => {
     if(!isEntered) return;
+    three.camera.lookAt(1, 2, 0);
     actions['wave'].play();
   }, [actions, isEntered]);
 
@@ -118,7 +138,8 @@ export const Dancer = () => {
       <>
       <primitive ref={dancerRef} object={scene} scale={0.05} />
       <ambientLight intensity={2} />
-      <rectAreaLight 
+      <rectAreaLight
+        ref={rectAreaLightRef}
         position={[0, 10, 0]}
         intensity={30}
       />
@@ -129,12 +150,14 @@ export const Dancer = () => {
         receiveShadow
       />
       <hemisphereLight
+        ref={hemisphereLightRef}
         position={[0, 5, 0]}
         intensity={0}
         groundColor={'lime'}
         color='blue'
       />
       <Box 
+        ref={boxRef}
         position={[0, 0, 0]}
         args={[100, 100, 100]}
       >
@@ -151,6 +174,7 @@ export const Dancer = () => {
       </Circle>
       <Points positions={positions.slice(0, positions.length / 3)}>
         <pointsMaterial 
+          ref={starGroupRef01}
           size={0.5} 
           color={new THREE.Color('#dc4f00')} 
           sizeAttenuation // 원근에 따라 크기를 조절
@@ -162,6 +186,7 @@ export const Dancer = () => {
       </Points>
       <Points positions={positions.slice(positions.length / 3, positions.length * 2 / 3)}>
         <pointsMaterial 
+          ref={starGroupRef02}
           size={0.5} 
           color={new THREE.Color('#dc4f00')} 
           sizeAttenuation // 원근에 따라 크기를 조절
@@ -173,6 +198,7 @@ export const Dancer = () => {
       </Points>
       <Points positions={positions.slice(positions.length * 2 / 3)}>
         <pointsMaterial 
+          ref={starGroupRef03}
           size={0.5} 
           color={new THREE.Color('#dc4f00')} 
           sizeAttenuation // 원근에 따라 크기를 조절
