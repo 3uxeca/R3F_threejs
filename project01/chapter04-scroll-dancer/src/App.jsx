@@ -1,10 +1,18 @@
+import styled from 'styled-components';
+import { MainCanvas } from './components/MainCanvas';
 function App() {
 
   return (
-    <>
-      스크롤 댄서를 재미있게 만들어봅시다.
-    </>
+    <Wrapper>
+      <MainCanvas />
+    </Wrapper>
   )
 }
 
 export default App
+
+const Wrapper = styled.div`
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+`
