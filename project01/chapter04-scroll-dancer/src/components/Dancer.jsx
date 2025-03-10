@@ -1,7 +1,7 @@
 import { useRecoilValue } from "recoil"
 import { IsEnteredAtom } from "../stores"
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Box, Circle, Points, useAnimations, useGLTF, useScroll, useTexture } from "@react-three/drei";
+import { Box, Circle, Points, PositionalAudio, useAnimations, useGLTF, useScroll, useTexture } from "@react-three/drei";
 import { Loader } from "./Loader";
 import gsap from 'gsap';
 import { useFrame, useThree } from "@react-three/fiber";
@@ -319,6 +319,13 @@ export const Dancer = () => {
           alphaTest={0.001} //
         />
       </Points>      
+      <PositionalAudio
+        position={[-24, 0, 0]}
+        autoplay
+        url='/audio/bgm.mp3'
+        distance={50}
+        loop
+      />
       </>
     )
   }
