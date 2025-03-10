@@ -4,8 +4,9 @@ import { useEffect, useRef } from "react";
 import { useAnimations, useGLTF, useScroll } from "@react-three/drei";
 import { Loader } from "./Loader";
 import gsap from 'gsap';
-import { useThree } from "@react-three/fiber";
+import { useFrame, useThree } from "@react-three/fiber";
 
+let timeline;
 export const Dancer = () => {
   const three = useThree();
   const isEntered = useRecoilValue(IsEnteredAtom);
@@ -13,6 +14,14 @@ export const Dancer = () => {
   const { scene, animations } = useGLTF('/models/dancer.glb');
   const { actions } = useAnimations(animations, dancerRef);
   const scroll = useScroll();
+
+  useFrame(() => {
+    console.log(scroll.offset);
+
+    if(!isEntered) return;
+
+    timeline.seek(scroll.offset * timeline.duration());
+  })
 
   useEffect(() => {
     if(!isEntered) return;
@@ -48,6 +57,21 @@ export const Dancer = () => {
       }
     )
   }, [isEntered, three.camera.position, three.camera.rotation]);
+
+  useEffect(() => {
+    if(!isEntered) return;
+    if(!dancerRef.current) return;
+    timeline = gsap.timeline();
+    // y 좌표 -4 * Math.PI 위치에서 0으로 돌아오는 애니메이션
+    timeline.from(
+      dancerRef.current.rotation,
+      {
+        duration: 4,
+        y: -4 * Math.PI,  
+      },
+      0.5
+    )
+  }, [isEntered]);
 
   if(isEntered) {
     return (
