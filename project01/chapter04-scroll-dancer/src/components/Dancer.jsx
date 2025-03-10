@@ -78,10 +78,11 @@ export const Dancer = () => {
           actions[currentAnimation].paused = true;
         }
       }, 8000);
-      return () => {
-        clearTimeout(timeout);
-      };
     }
+    return () => {
+      clearTimeout(timeout);
+      actions[currentAnimation]?.reset().fadeOut(0.5).stop();
+    };
   }, [actions, currentAnimation]);
 
   useEffect(() => {
@@ -143,6 +144,13 @@ export const Dancer = () => {
   useEffect(() => {
     if(!isEntered) return;
     if(!dancerRef.current) return;
+    // 카메라를 특정 위치 중심으로 무언가 회전시키고 싶을 때, 지구가 태양 주위를 도는 것처럼
+    // 카메라가 댄서를 중심으로 공전하는 효과를 주고싶을때 사용하는 기법
+    const pivot = new THREE.Group(); 
+    pivot.position.copy(dancerRef.current.position);
+    pivot.add(three.camera);
+    three.scene.add(pivot);
+
     timeline = gsap.timeline();
     // y 좌표 -4 * Math.PI 위치에서 0으로 돌아오는 애니메이션
     timeline.from(
@@ -167,7 +175,31 @@ export const Dancer = () => {
         z: 8
       },
       "<"   // 위 코드와 동시 동작
-    ).to(
+    )
+    .to(
+      colors,
+      {
+        duration: 10,
+        boxMaterialColor: '#0c0400',
+      },
+      "<"
+    )
+    .to(
+      pivot.rotation,
+      {
+        duration: 10,
+        y: Math.PI
+      }
+    )
+    .to(three.camera.position,
+      {
+        duration: 10,
+        x: -4,
+        z: 12,
+      },
+      "<"
+    )
+    .to(
       three.camera.position,
       {
         duration: 10,
@@ -179,10 +211,38 @@ export const Dancer = () => {
       {
         duration: 10,
         x: 0,
-        z: 16
+        z: 16,
+        onUpdate: () => {
+          setRotateFinished(false);
+        }
       }
-    )
-  }, [isEntered, three.camera.position]);
+    ).to(
+      hemisphereLightRef.current,
+      {
+        duration: 5,
+        intensity: 30,
+      }
+    ).to(
+      pivot.rotation,
+      {
+        duration: 25,
+        y: Math.PI*4,
+        onUpdate: () => {
+          setRotateFinished(true);
+        }
+      },
+      "<"
+    ).to(
+      colors,
+      {
+        duration: 15,
+        boxMaterialColor: '#dc4f00'
+      }
+    );
+    return () => {
+      three.scene.remove(pivot);
+    }
+  }, [isEntered, three.camera, three.camera.position, three.scene]);
 
   if(isEntered) {
     return (
