@@ -1,7 +1,7 @@
 import { useRecoilValue } from "recoil"
 import { IsEnteredAtom } from "../stores"
 import { useEffect, useMemo, useRef, useState } from "react";
-import { Box, Circle, Points, useAnimations, useGLTF, useScroll, useTexture } from "@react-three/drei";
+import { Box, Circle, Points, PositionalAudio, useAnimations, useGLTF, useScroll, useTexture } from "@react-three/drei";
 import { Loader } from "./Loader";
 import gsap from 'gsap';
 import { useFrame, useThree } from "@react-three/fiber";
@@ -57,7 +57,33 @@ export const Dancer = () => {
     if(!isEntered) return;
     three.camera.lookAt(1, 2, 0);
     actions['wave'].play();
-  }, [actions, isEntered]);
+    three.scene.background = new THREE.Color(colors.boxMaterialColor);
+    scene.traverse(obj => {
+      if(obj.isMesh) {
+        obj.castShadow = true;
+        obj.receiveShadow = true;
+      }
+    })
+  }, [actions, isEntered, scene, three.camera, three.scene]);
+
+  // 애니메이션 제어
+  useEffect(() => {
+    let timeout;
+    if(currentAnimation === 'wave') {
+      actions[currentAnimation]?.reset().fadeIn(0.5).play();
+    } else {
+      actions[currentAnimation]?.reset().fadeIn(0.5).play().setLoop(THREE.LoopOnce, 1);
+      timeout = setTimeout(() => {
+        if(actions[currentAnimation]) {
+          actions[currentAnimation].paused = true;
+        }
+      }, 8000);
+    }
+    return () => {
+      clearTimeout(timeout);
+      actions[currentAnimation]?.reset().fadeOut(0.5).stop();
+    };
+  }, [actions, currentAnimation]);
 
   useEffect(() => {
     // gsap
@@ -86,19 +112,52 @@ export const Dancer = () => {
         duration: 2.5,
         z: 0,
       }
+    );
+    gsap.fromTo(
+      colors,
+      {boxMaterialColor: '#0c0400'},
+      {duration: 2.5, boxMaterialColor: '#dc4f00'}
     )
+    gsap.to(starGroupRef01.current, {
+      yoyo: true, // 애니메이션이 실행되었다가 역재생하는 값
+      duration: 2,
+      repeat: -1, // -3이면 무한 반복
+      ease: 'linear', // 선형적 속도로 재생
+      size: 0.05, // 대상의 크기 설정
+    });
+    gsap.to(starGroupRef02.current, {
+      yoyo: true,
+      duration: 3,
+      repeat: -1,
+      ease: 'linear',
+      size: 0.05,
+    });
+    gsap.to(starGroupRef03.current, {
+      yoyo: true,
+      duration: 4,
+      repeat: -1,
+      ease: 'linear',
+      size: 0.05,
+    });        
   }, [isEntered, three.camera.position, three.camera.rotation]);
 
   useEffect(() => {
     if(!isEntered) return;
     if(!dancerRef.current) return;
+    // 카메라를 특정 위치 중심으로 무언가 회전시키고 싶을 때, 지구가 태양 주위를 도는 것처럼
+    // 카메라가 댄서를 중심으로 공전하는 효과를 주고싶을때 사용하는 기법
+    const pivot = new THREE.Group(); 
+    pivot.position.copy(dancerRef.current.position);
+    pivot.add(three.camera);
+    three.scene.add(pivot);
+
     timeline = gsap.timeline();
     // y 좌표 -4 * Math.PI 위치에서 0으로 돌아오는 애니메이션
     timeline.from(
       dancerRef.current.rotation,
       {
         duration: 4,
-        y: -4 * Math.PI,  
+        y: Math.PI,  
       },
       0.5
     ).from(
@@ -116,7 +175,31 @@ export const Dancer = () => {
         z: 8
       },
       "<"   // 위 코드와 동시 동작
-    ).to(
+    )
+    .to(
+      colors,
+      {
+        duration: 10,
+        boxMaterialColor: '#0c0400',
+      },
+      "<"
+    )
+    .to(
+      pivot.rotation,
+      {
+        duration: 10,
+        y: Math.PI
+      }
+    )
+    .to(three.camera.position,
+      {
+        duration: 10,
+        x: -4,
+        z: 12,
+      },
+      "<"
+    )
+    .to(
       three.camera.position,
       {
         duration: 10,
@@ -128,10 +211,38 @@ export const Dancer = () => {
       {
         duration: 10,
         x: 0,
-        z: 16
+        z: 16,
+        onUpdate: () => {
+          setRotateFinished(false);
+        }
       }
-    )
-  }, [isEntered, three.camera.position]);
+    ).to(
+      hemisphereLightRef.current,
+      {
+        duration: 5,
+        intensity: 30,
+      }
+    ).to(
+      pivot.rotation,
+      {
+        duration: 25,
+        y: Math.PI*4,
+        onUpdate: () => {
+          setRotateFinished(true);
+        }
+      },
+      "<"
+    ).to(
+      colors,
+      {
+        duration: 15,
+        boxMaterialColor: '#dc4f00'
+      }
+    );
+    return () => {
+      three.scene.remove(pivot);
+    }
+  }, [isEntered, three.camera, three.camera.position, three.scene]);
 
   if(isEntered) {
     return (
@@ -208,6 +319,13 @@ export const Dancer = () => {
           alphaTest={0.001} //
         />
       </Points>      
+      <PositionalAudio
+        position={[-24, 0, 0]}
+        autoplay
+        url='/audio/bgm.mp3'
+        distance={50}
+        loop
+      />
       </>
     )
   }
