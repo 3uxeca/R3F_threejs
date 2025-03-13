@@ -1,14 +1,38 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import Earth from "./Earth";
 import Weather from "./Weather";
-import { getCurrentWeather } from '../utils/weatherApi';
+import { getCityWeather, getCurrentWeather } from '../utils/weatherApi';
+import { cities } from '../utils/cities';
+
+const API_KEY = process.env.REACT_APP_API_KEY;
 
 const Scene = () => {
-  const API_KEY = process.env.REACT_APP_API_KEY;
-  console.log('API KEY ::', API_KEY);
+  const [content, setContent] = useState();
+
+  const getCitiesWeather = () => {
+    const promises = cities.map((city) => {
+      return (
+        getCityWeather(city, API_KEY)
+      )
+    })
+
+    Promise.all(promises)
+    .then((weatherDataArray) => {
+      setContent(weatherDataArray);
+    })
+    .catch((error) => {
+      console.error('getCitiesWeather error :: ', error);
+    })
+  };
+
   useEffect(() => {
-      getCurrentWeather(44.34, 10.99, API_KEY);
+    getCitiesWeather();
   }, []);
+  
+  useEffect(() => {
+    console.log('도시들 날씨 데이터 :: ', content);
+  }, [content]);
+
   return(
     <>
       <Earth position={[0,-2,0]}/>
