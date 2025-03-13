@@ -1,5 +1,5 @@
 import { useFrame, useLoader } from "@react-three/fiber";
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 const Earth = () => {
@@ -9,9 +9,15 @@ const Earth = () => {
     // console.log(ref.current);
     ref.current.rotation.y += delta * 0.1;
   })
+
   return(
-    <mesh ref={ref} rotation-x={-Math.PI/2} scale={1.3} position={[0, -1.5, 0]}>
-        <primitive object={glb.scene} />
+    <mesh 
+      ref={ref} 
+      rotation-x={-Math.PI/2} 
+      scale={1.3} 
+      position={[0, -1.5, 0]}
+    >
+      <primitive object={glb.scene} />
     </mesh>
   )
 }

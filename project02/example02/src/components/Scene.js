@@ -4,6 +4,7 @@ import Weather from "./Weather";
 import { getCityWeather, getCurrentWeather } from '../utils/weatherApi';
 import { cities } from '../utils/cities';
 import Lights from './Lights';
+import { useFrame } from '@react-three/fiber';
 
 const API_KEY = process.env.REACT_APP_API_KEY;
 
@@ -34,6 +35,10 @@ const Scene = () => {
     console.log('도시들 날씨 데이터 :: ', content);
   }, [content]);
 
+  // useFrame((state) => {
+  //   console.log(state)
+  // })
+
   return(
     <>
       <Lights />
@@ -50,7 +55,7 @@ const Scene = () => {
           <Weather 
             key={i+'Model Key'}
             position={[x, y - 1, 0]}
-            rotaion-y={i + 1}
+            rotation-y={i + 1}
             weather={el.weatherData.weather[0].main.toLowerCase()}
           />
         )
