@@ -35,13 +35,13 @@ const Scene = () => {
 
   return(
     <>
-      <Earth position={[0,-2,0]}/>
+      <Earth />
       {content?.map((el, i) => {
         return (
           <Weather 
             key={i+'Model Key'}
             position={[-1 + (i * 0.5), 0, 0]}
-            weather={content[i].weatherData.weather[0].main.toLowerCase()}
+            weather={el.weatherData.weather[0].main.toLowerCase()}
           />
         )
       })}
