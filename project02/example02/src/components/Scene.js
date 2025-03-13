@@ -36,16 +36,15 @@ const Scene = () => {
   return(
     <>
       <Earth position={[0,-2,0]}/>
-      {
-        content&&
-        <>
-        <Weather position={[0.5,0,0]} weather={content[0].weatherData.weather[0].main.toLowerCase()} />
-        <Weather position={[0,0,0]} weather={content[1].weatherData.weather[0].main.toLowerCase()}/>
-        <Weather position={[-0.5,0,0]} weather={content[2].weatherData.weather[0].main.toLowerCase()} />
-        <Weather position={[-1,0,0]} weather={content[3].weatherData.weather[0].main.toLowerCase()} />
-        <Weather position={[1,0,0]} weather={content[4].weatherData.weather[0].main.toLowerCase()} />
-        </>
-      }
+      {content?.map((el, i) => {
+        return (
+          <Weather 
+            key={i+'Model Key'}
+            position={[-1 + (i * 0.5), 0, 0]}
+            weather={content[i].weatherData.weather[0].main.toLowerCase()}
+          />
+        )
+      })}
     </>
   )
 }
