@@ -2,11 +2,19 @@ import { useLoader } from "@react-three/fiber";
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 const Weather = (props) => {
-    const glb = useLoader(GLTFLoader, '/models/weather.glb')
-    console.log(glb.nodes)
+    const { position, weather } = props;
+    const glb = useLoader(GLTFLoader, '/models/weather.glb');
+    console.log(glb.nodes);
+
+    let weatherModel;
+    if(glb.nodes[weather]) {
+        weatherModel = glb.nodes[weather].clone();
+    } else {
+        weatherModel = glb.nodes.cloud.clone();
+    }
     return(
-        <mesh position={props.position}>
-            <primitive object={glb.nodes[props.weather]} />
+        <mesh position={position}>
+            <primitive object={weatherModel} />
         </mesh>
     )
 }
