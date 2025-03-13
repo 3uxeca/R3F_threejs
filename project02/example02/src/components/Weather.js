@@ -2,9 +2,11 @@ import { useFrame, useLoader } from "@react-three/fiber";
 import { useMemo, useRef, useState } from 'react';
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { motion } from 'framer-motion-3d';
+import { Html } from '@react-three/drei';
+import { CityName } from './CityName';
 
 const Weather = (props) => {
-    const { position, weather, rotationY } = props;
+    const { position, weather, rotationY, cityName } = props;
     const glb = useLoader(GLTFLoader, '/models/weather.glb');
     const ref = useRef(null);
     // console.log(glb.nodes);
@@ -22,9 +24,13 @@ const Weather = (props) => {
     })
     
     return(
+      <group
+        rotation-y={rotationY} 
+        position={position}
+      >
         <motion.mesh 
-          // onPointerEnter={(e) => setHover(true)}
-          // onPointerLeave={(e) => setHover(false)}
+          onPointerEnter={(e) => setHover(true)}
+          onPointerOut={(e) => setHover(false)}
           // onClick={(e) => console.log('클릭')}
           // onContextMenu={(e) => console.log('콘텍스트 메뉴, 오른쪽 마우스 클릭')}
           // onDoubleClick={(e) => console.log('더블 클릭')}
@@ -40,11 +46,11 @@ const Weather = (props) => {
           // onUpdate={(self) => console.log('프로퍼티가 업데이트됨')}        
           whileHover={{ scale: 1.5, transition: 0.5 }}
           ref={ref} 
-          rotation-y={rotationY} 
-          position={position}
         >
           <primitive object={weatherModel} />
         </motion.mesh>
+        { isHover && <CityName name={cityName} /> }
+      </group>
     )
 }
 
