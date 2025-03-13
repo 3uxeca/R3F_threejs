@@ -3,6 +3,7 @@ import Earth from "./Earth";
 import Weather from "./Weather";
 import { getCityWeather, getCurrentWeather } from '../utils/weatherApi';
 import { cities } from '../utils/cities';
+import Lights from './Lights';
 
 const API_KEY = process.env.REACT_APP_API_KEY;
 
@@ -35,12 +36,21 @@ const Scene = () => {
 
   return(
     <>
+      <Lights />
       <Earth />
       {content?.map((el, i) => {
+        const angle = (i / (content.length - 1)) * Math.PI;
+        const radius = 2;
+        // console.log('angle :: ', angle);
+        const x = radius * Math.cos(angle);
+        // console.log('x :: ', x.toFixed(2));
+        const y = radius * Math.sin(angle);
+        // console.log('y :: ', y.toFixed(2));
         return (
           <Weather 
             key={i+'Model Key'}
-            position={[-1 + (i * 0.5), 0, 0]}
+            position={[x, y - 1, 0]}
+            rotaion-y={i + 1}
             weather={el.weatherData.weather[0].main.toLowerCase()}
           />
         )
