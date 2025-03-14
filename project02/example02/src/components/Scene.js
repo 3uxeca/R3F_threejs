@@ -7,6 +7,7 @@ import Lights from './Lights';
 import { useFrame } from '@react-three/fiber';
 import { Bounds } from '@react-three/drei';
 import { FocusWeather } from './FocusWeather';
+import Clouds from './Clouds';
 
 const Scene = () => {
   const [content, setContent] = useState();
@@ -43,6 +44,7 @@ const Scene = () => {
     <>
       <Lights />
       <Earth />
+      <Clouds />
       <Bounds 
         // fit // 바운딩박스가 주어진 객체나 경계상자에 맞게 조정
         clip  // 카메라의 근원과 원거리 평면 설정 => 특정 거리 이상의 오브젝트를 렌더링에서 제외 => 성능 향상에 도움 (여기서는 영향 없음)
