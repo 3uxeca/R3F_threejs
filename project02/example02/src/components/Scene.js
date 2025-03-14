@@ -8,15 +8,13 @@ import { useFrame } from '@react-three/fiber';
 import { Bounds } from '@react-three/drei';
 import { FocusWeather } from './FocusWeather';
 
-const API_KEY = process.env.REACT_APP_API_KEY;
-
 const Scene = () => {
   const [content, setContent] = useState();
 
   const getCitiesWeather = () => {
     const promises = cities.map((city) => {
       return (
-        getCityWeather(city, API_KEY)
+        getCityWeather(city)
       )
     })
 
