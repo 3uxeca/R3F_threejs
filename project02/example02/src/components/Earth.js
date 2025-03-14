@@ -1,4 +1,4 @@
-import { Html } from '@react-three/drei';
+import { Html, Sparkles } from '@react-three/drei';
 import { useFrame, useLoader } from "@react-three/fiber";
 import { useEffect, useRef, useState } from 'react';
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
@@ -33,6 +33,13 @@ const Earth = () => {
 
   return(
     <group position={[0, -1.5, 0]}>
+      <Sparkles 
+        position={[0, 0, 0]}
+        count={80}
+        scale={2.8}
+        size={5}
+        speed={0.4}
+      />
       <mesh 
         onPointerEnter={(e) => setHover(true)}
         onPointerOut={(e) => setHover(false)}
