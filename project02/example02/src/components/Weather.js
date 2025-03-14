@@ -5,6 +5,7 @@ import { motion } from 'framer-motion-3d';
 import { Html } from '@react-three/drei';
 import { CityName } from './CityName';
 import { useNavigate } from 'react-router-dom';
+import { useBodyClass } from '../utils/hook';
 
 const Weather = (props) => {
   const { position, weather, rotationY, cityName } = props;
@@ -25,10 +26,6 @@ const Weather = (props) => {
     ref.current.rotation.y += delta;
   });
 
-  useEffect(() => {
-    document.body.style.cursor = isHover ? 'pointer' : 'auto'
-  }, [isHover]);    
-
   const formatCityName = (name) => {
     return name.replace(/\s/g,'').toLowerCase();
   };
@@ -36,6 +33,8 @@ const Weather = (props) => {
   const onClick = () => {
     navigate(`/${formatCityName(cityName)}`);
   };
+
+  useBodyClass(isHover, 'pointer');
     
   return(
     <group

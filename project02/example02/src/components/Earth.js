@@ -2,6 +2,7 @@ import { Html } from '@react-three/drei';
 import { useFrame, useLoader } from "@react-three/fiber";
 import { useEffect, useRef, useState } from 'react';
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+import { useBodyClass } from '../utils/hook';
 
 const Earth = () => {
   const glb = useLoader(GLTFLoader, '/models/earth.glb');
@@ -14,9 +15,21 @@ const Earth = () => {
   })
 
   // console.log('htmlRef.current : ', htmlRef.current);
-  useEffect(() => {
-    document.body.style.cursor = isHover ? 'pointer' : 'auto'
-  }, [isHover]);
+  useBodyClass(isHover, 'drag');
+  // useEffect(() => {
+  //   const bodyClassList = window?.document.body.classList;
+
+  //   if(isHover) {
+  //     bodyClassList.add('drag');
+  //   } else {
+  //     bodyClassList.remove('drag');
+  //   }
+
+  //   return () => {
+  //     bodyClassList.remove('drag');
+  //   }
+
+  // }, [isHover]);
 
   return(
     <group position={[0, -1.5, 0]}>
@@ -29,18 +42,15 @@ const Earth = () => {
       >
         <primitive object={glb.scene} />
       </mesh>
-      {
-        isHover &&
-        <Html
-          center
-          ref={htmlRef}
-          style={{ color: 'red' }}
-        >
-          <span className='rotation-icon'>
-            <img src={'/icons/rotation.png'} alt='icon' />
-          </span>
-        </Html>
-      }
+      <Html
+        center
+        ref={htmlRef}
+        style={{ color: 'red' }}
+      >
+        <span className='rotation-icon'>
+          <img src={'/icons/rotation.png'} alt='icon' />
+        </span>
+      </Html>
     </group>
   )
 }
