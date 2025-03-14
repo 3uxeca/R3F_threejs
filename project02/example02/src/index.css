@@ -9,6 +9,15 @@ body {
   background: radial-gradient(circle, rgb(83, 173, 241) 0%, rgb(12, 73, 187) 100%);
 }
 
+.layout-detail {
+  position: absolute;
+  left: 0;
+  top: 0;
+  z-index: 999;
+  color: white;
+  font-size: 52px;
+}
+
 .rotation-icon {
   width: 50px;
   height: 50px;
@@ -50,3 +59,4 @@ body {
   margin-left: -20px;
   margin-bottom: -10px;
 }
+

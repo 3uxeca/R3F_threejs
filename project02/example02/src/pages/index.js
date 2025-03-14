@@ -5,6 +5,7 @@ import { Loader, OrbitControls } from '@react-three/drei';
 import Lights from '../components/Lights';
 import { motion } from 'framer-motion-3d';
 import { Vector3 } from 'three';
+import { Outlet } from 'react-router-dom';
 
 function Sphere() {
   return (
@@ -83,6 +84,7 @@ function Home() {
       />
     </Canvas>
     <Loader />
+    <Outlet />
     </>
   );
 }
