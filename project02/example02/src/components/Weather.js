@@ -4,11 +4,13 @@ import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 import { motion } from 'framer-motion-3d';
 import { Html } from '@react-three/drei';
 import { CityName } from './CityName';
+import { useNavigate } from 'react-router-dom';
 
 const Weather = (props) => {
   const { position, weather, rotationY, cityName } = props;
   const glb = useLoader(GLTFLoader, '/models/weather.glb');
   const ref = useRef(null);
+  const navigate = useNavigate();
   // console.log(glb.nodes);
   const [isHover, setHover] = useState(false);
   
@@ -26,6 +28,14 @@ const Weather = (props) => {
   useEffect(() => {
     document.body.style.cursor = isHover ? 'pointer' : 'auto'
   }, [isHover]);    
+
+  const formatCityName = (name) => {
+    return name.replace(/\s/g,'').toLowerCase();
+  };
+
+  const onClick = () => {
+    navigate(`/${formatCityName(cityName)}`);
+  };
     
   return(
     <group
@@ -35,6 +45,7 @@ const Weather = (props) => {
       <motion.mesh 
         onPointerEnter={(e) => setHover(true)}
         onPointerOut={(e) => setHover(false)}
+        onClick={onClick}
         // onClick={(e) => console.log('클릭')}
         // onContextMenu={(e) => console.log('콘텍스트 메뉴, 오른쪽 마우스 클릭')}
         // onDoubleClick={(e) => console.log('더블 클릭')}

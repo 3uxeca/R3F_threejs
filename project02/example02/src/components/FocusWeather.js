@@ -1,9 +1,11 @@
 import { useBounds } from '@react-three/drei'
 import { useEffect, useRef } from 'react';
+import { useLocation } from 'react-router-dom';
 
 export function FocusWeather({children}) {
   const bounds = useBounds();
   const ref = useRef(null);
+  const location = useLocation();
 
   // useEffect(() => {
   //   console.log(bounds.getSize());  // 현재 바운딩 박스의 크기를 반환
@@ -17,13 +19,20 @@ export function FocusWeather({children}) {
     console.log('e.object : ', e.object);
     e.stopPropagation();
     bounds.refresh(e.object).clip().fit();
-  }
+  };
 
   const onPointerMissed = (e) => {
     if(e.button === 0) {  // 좌클릭(0) 시에만 동작
       bounds.refresh().fit();
     }
-  }
+  };
+
+  useEffect(() => {
+    if(location.pathname === '/'){
+      console.log(location);
+      bounds.refresh().fit();
+    }
+  }, [location]);
 
   return (
     <group onClick={onClick} onPointerMissed={onPointerMissed}>
