@@ -71,7 +71,8 @@ function Home() {
         <Scene/>
         {/* <FramerModel /> */}
       </Suspense> 
-      <OrbitControls 
+      <OrbitControls
+        makeDefault
         enablePan={false}
         minDistance={2}
         maxDistance={15}
