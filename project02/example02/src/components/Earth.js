@@ -1,6 +1,6 @@
 import { Html } from '@react-three/drei';
 import { useFrame, useLoader } from "@react-three/fiber";
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
 
 const Earth = () => {
@@ -14,6 +14,9 @@ const Earth = () => {
   })
 
   // console.log('htmlRef.current : ', htmlRef.current);
+  useEffect(() => {
+    document.body.style.cursor = isHover ? 'pointer' : 'auto'
+  }, [isHover]);
 
   return(
     <group position={[0, -1.5, 0]}>
@@ -29,6 +32,7 @@ const Earth = () => {
       {
         isHover &&
         <Html
+          center
           ref={htmlRef}
           style={{ color: 'red' }}
         >
