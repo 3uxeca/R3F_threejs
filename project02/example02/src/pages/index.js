@@ -5,7 +5,9 @@ import { Loader, OrbitControls } from '@react-three/drei';
 import Lights from '../components/Lights';
 import { motion } from 'framer-motion-3d';
 import { Vector3 } from 'three';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useLocation } from 'react-router-dom';
+import { AnimatePresence } from 'framer-motion';
+import AnimatedOutlet from '../components/AnimatedOutlet';
 
 function Sphere() {
   return (
@@ -64,6 +66,7 @@ function FramerModel () {
 // Loader는 Canvas 밖에 만들어야함!!
 function Home() {
   const pivot = new Vector3(0, -2, 0);
+  const location = useLocation();
   return (
     <>
     <Canvas camera={{position: [0, 0, 5], fov: 45}}>
@@ -84,7 +87,10 @@ function Home() {
       />
     </Canvas>
     <Loader />
-    <Outlet />
+    <AnimatePresence>
+      <AnimatedOutlet key={location.pathname} />
+      {/* <Outlet key={location.pathname} /> */}
+    </AnimatePresence>
     </>
   );
 }
