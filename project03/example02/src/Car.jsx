@@ -1,6 +1,9 @@
 import { useControls } from "leva";
-import { useBox } from "@react-three/cannon";
+import { useCompoundBody, useRaycastVehicle } from "@react-three/cannon";
 import DummyCarBody from "./dummy/DummyCarBody";
+import { useRef } from "react";
+import DummyWheel from "./dummy/DummyWheel";
+import useWheels from "./utils/useWheels";
 
 const Car = () => {
   const chassisBodyValue = useControls("chassisBody", {
@@ -17,16 +20,41 @@ const Car = () => {
   height = 0.12;
   front = 0.17;
   mass = 150;
+  wheelRadius = 0.05;
 
   const chassisBodyArgs = [width, height, front * 2];
 
-  const [chassisBody, chassisApi] = useBox(() => ({
-    args: chassisBodyArgs,
-    position: position,
-    mass,
+  const [wheels, wheelInfos] = useWheels(width, height, front, wheelRadius);
+
+  const [chassisBody, chassisApi] = useCompoundBody(
+    () => ({
+      // args: chassisBodyArgs,
+      position,
+      mass,
+      shapes: [
+        {
+          args: chassisBodyArgs,
+          position: [0, 0, 0],
+          type: "Box",
+        },
+        {
+          args: [width, height, front],
+          position: [0, height, 0],
+          type: "Box",
+        },
+      ],
+    }),
+    useRef(null)
+  );
+
+  const [vehicle, vehicleApi] = useRaycastVehicle(() => ({
+    chassisBody,
+    wheelInfos,
+    wheels,
   }));
+
   return (
-    <group>
+    <group ref={vehicle}>
       {/* 차체 */}
       <group ref={chassisBody}>
         {/* 차체 바디 */}
@@ -37,6 +65,10 @@ const Car = () => {
         />
       </group>
       {/* 바퀴 */}
+      <DummyWheel wheelRef={wheels[0]} radius={wheelRadius} />
+      <DummyWheel wheelRef={wheels[1]} radius={wheelRadius} />
+      <DummyWheel wheelRef={wheels[2]} radius={wheelRadius} />
+      <DummyWheel wheelRef={wheels[3]} radius={wheelRadius} />
     </group>
   );
 };
